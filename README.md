@@ -19,7 +19,7 @@ A real-time aircraft tracking web application with an immersive cockpit view mod
 
 ## Demo
 
-Simply open `app.html` in a modern web browser. For the best experience, allow location access when prompted.
+Simply open `app/index.html` in a modern web browser. For the best experience, allow location access when prompted.
 
 ## Quick Start
 
@@ -37,10 +37,10 @@ python -m http.server 8000
 # Using Node.js
 npx http-server
 
-# Or simply open app.html in your browser
+# Or simply open app/index.html in your browser
 ```
 
-3. Visit `http://localhost:8000/app.html` (or your chosen port)
+3. Visit `http://localhost:8000/app/` (or your chosen port)
 
 4. Allow location access when prompted for the best experience
 
@@ -79,7 +79,7 @@ Enter cockpit mode by clicking on an aircraft and then clicking "Enter Cockpit":
 ### Application Structure
 
 ```
-app.html
+app/index.html
 ├── Styles (lines 45-333)
 │   ├── CSS Variables & Theme
 │   ├── HUD Components
@@ -368,4 +368,4 @@ Special thanks to the aviation community and open-source contributors who make p
 
 ---
 
-**Note**: Remember to replace `yourusername` in GitHub URLs with your actual username, and remove or replace the Google Analytics tracking code (lines 36-44 in app.html) if you don't want analytics.
+**Note**: Remember to replace `yourusername` in GitHub URLs with your actual username, and remove or replace the Google Analytics tracking code (lines 36-44 in app/index.html) if you don't want analytics.
