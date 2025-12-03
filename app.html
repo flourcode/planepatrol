@@ -1410,7 +1410,7 @@ document.querySelectorAll('.hotspot-btn').forEach(btn => {
 });
 document.getElementById('searchBtn').addEventListener('click', performSearch);
 document.getElementById('searchInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
-function teleportTo(lat, lon, msg) {
+function teleportTo(lat, lon, msg, aircraftData = null) {
     state.useGeo = false; 
     state.lat = lat; 
     state.lon = lon;
@@ -1418,6 +1418,7 @@ function teleportTo(lat, lon, msg) {
     DOM.statusDisplay.textContent = 'Remote'; 
     document.getElementById('locationSource').textContent = 'SRCH'; 
     DOM.resetBtn.style.display = 'flex'; 
+    
     if (state.map) {
         state.map.flyTo({ 
             center: [state.lon, state.lat], 
@@ -1426,12 +1427,39 @@ function teleportTo(lat, lon, msg) {
         });
         updateUserLocation(state.lat, state.lon);
     }
+    
+    // FIX: clear previous fetch to ensure the new one runs immediately
+    if (state.abortController) state.abortController.abort();
+    state.isFetchingPlanes = false;
+
     DOM.planeCount.textContent = '...';
     state.planesData.clear(); 
+
+    // FIX: If we have specific aircraft data, add it immediately
+    if (aircraftData) {
+        const now = Date.now();
+        // Create the data structure expected by the animation loop
+        const pData = {
+            ...aircraftData,
+            currentLat: aircraftData.lat,
+            currentLon: aircraftData.lon,
+            startLat: aircraftData.lat,
+            startLon: aircraftData.lon,
+            targetLat: aircraftData.lat, 
+            targetLon: aircraftData.lon,
+            startTime: now,
+            trail: [[aircraftData.lon, aircraftData.lat]]
+        };
+        state.planesData.set(aircraftData.hex, pData);
+        DOM.planeCount.textContent = "1";
+    }
+
     fetchPlanes(); 
     updateWeather(true);
+    
     if (msg) showToast(msg, 2000);
     haptic('medium');
+    
     const modal = document.getElementById('exploreModal');
     if (modal.classList.contains('active')) {
         modal.classList.remove('active');
@@ -1443,10 +1471,13 @@ async function performSearch() {
     const errorMsg = document.getElementById('searchError');
     const query = input.value.trim().toUpperCase();
     if (!query) return;
+    
     input.disabled = true;
     errorMsg.textContent = 'Searching...';
+    
     try {
         let found = false;
+        // 1. Try Airport Search
         const searchString = query.length <= 4 ? `${query} Airport` : query;
         if (query.length > 2) {
             try {
@@ -1458,7 +1489,7 @@ async function performSearch() {
                     const lat = result.location.y;
                     const lon = result.location.x;
                     const name = result.address.replace(' (Airport)', '');
-                    finishSearch(lat, lon, `✈️ ${name}`);
+                    finishSearch(lat, lon, `✈️ ${name}`); // Airports don't have aircraft data, pass null
                     found = true;
                     return; 
                 }
@@ -1466,6 +1497,8 @@ async function performSearch() {
                 console.warn("ArcGIS lookup skipped:", e);
             }
         }
+
+        // 2. Try Aircraft Search if airport failed
         if (!found) {
             await searchCallsign(query);
         }
@@ -1477,21 +1510,26 @@ async function performSearch() {
         input.disabled = false;
         input.focus();
     }
+
     async function searchCallsign(code) {
         const res = await fetch(`https://api.airplanes.live/v2/callsign/${code}`);
         if (!res.ok) throw new Error('API Error');
         const data = await res.json();
         const aircraft = data.ac ? data.ac.find(p => p.lat && p.lon) : null;
+        
         if (aircraft) {
-            finishSearch(aircraft.lat, aircraft.lon, `Tracking ${code}`);
+            // FIX: Pass the 'aircraft' object as the 4th argument
+            finishSearch(aircraft.lat, aircraft.lon, `Tracking ${code}`, aircraft);
         } else {
             throw new Error('Aircraft not found');
         }
     }
-    function finishSearch(lat, lon, msg) {
+
+    function finishSearch(lat, lon, msg, aircraftData = null) {
         errorMsg.textContent = '';
         input.value = ''; 
-        teleportTo(lat, lon, msg); // Calls the global function
+        // Pass the data to the main teleport function
+        teleportTo(lat, lon, msg, aircraftData); 
     }
 }
 // === EVENT LISTENERS ===
