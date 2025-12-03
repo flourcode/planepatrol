@@ -1,6 +1,6 @@
 # PlanePatrol ✈️
 
-A real-time aircraft tracking web application with an immersive cockpit view mode. Track aircraft around your location or search for specific flights and airports worldwide. Disclaimer: This app uses free community APIs (airplanes.live, Iowa State weather radar) that aren't licensed for commercial use. It's meant for personal learning, tinkering, and plane spotting—not as a product or service. Please respect the data providers who make this possible.
+A real-time aircraft tracking web application with an immersive cockpit view mode. Track aircraft around your location or search for specific flights and airports worldwide. Disclaimer: This app uses free community APIs (airplanes.live, Iowa State weather radar) that aren't licensed for commercial use. It's meant for personal learning, tinkering, and plane spotting, not as a product or service. Please respect the data providers who make this possible.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
