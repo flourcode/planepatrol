@@ -117,13 +117,18 @@
             color: var(--text-primary);
         }
 
-        .logo svg { width: 28px; height: 28px; }
+        .logo svg { 
+            width: 64px; 
+            height: 64px; 
+            flex-shrink: 0;
+        }
 
         .logo-text {
             font-family: var(--font-mono);
-            font-size: 16px;
+            font-size: 36px;
             font-weight: 700;
             letter-spacing: -0.5px;
+            white-space: nowrap;
         }
 
         .logo-tag {
@@ -168,9 +173,14 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            white-space: nowrap;
         }
 
-        .nav-btn svg { width: 16px; height: 16px; }
+        .nav-btn svg { 
+            width: 16px; 
+            height: 16px; 
+            flex-shrink: 0;
+        }
 
         .nav-btn-secondary {
             background: transparent;
@@ -214,17 +224,22 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            background: rgba(255, 179, 64, 0.1);
-            border: 1px solid rgba(255, 179, 64, 0.2);
-            border-radius: 6px;
+            background: var(--success-glow);
+            border: 1px solid var(--success);
+            border-radius: 14px;
             padding: 8px 14px;
             font-size: 13px;
             font-weight: 600;
-            color: var(--warning);
+            color: var(--success);
             margin-bottom: 24px;
+            max-width: 100%;
         }
 
-        .hero-badge svg { width: 16px; height: 16px; }
+        .hero-badge svg { 
+            width: 16px; 
+            height: 16px; 
+            flex-shrink: 0;
+        }
 
         .hero-title {
             font-size: clamp(40px, 5vw, 56px);
@@ -295,6 +310,7 @@
             gap: 32px;
             font-size: 13px;
             color: var(--text-tertiary);
+            flex-wrap: wrap;
         }
 
         .hero-meta-item {
@@ -401,7 +417,8 @@
         .feature-icon {
             width: 48px;
             height: 48px;
-            background: var(--accent-glow);
+            background: var(--bg-elevated);
+            border: 1px solid var(--separator);
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -409,17 +426,10 @@
             margin-bottom: 20px;
         }
 
-        .feature-icon svg {
-            width: 24px;
-            height: 24px;
-            color: var(--accent);
-        }
-
-        .feature-icon.green { background: var(--success-glow); }
-        .feature-icon.green svg { color: var(--success); }
+        .feature-icon svg { width: 24px; height: 24px; color: var(--accent); }
 
         .feature-title {
-            font-size: 17px;
+            font-size: 18px;
             font-weight: 600;
             margin-bottom: 8px;
         }
@@ -430,201 +440,30 @@
             line-height: 1.6;
         }
 
-        /* Screenshots Gallery */
-        #screenshots {
-            padding-top: 80px;
-        }
-
-        .screenshots-header {
-            margin-bottom: 48px;
-        }
-
-        .screenshots-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        .screenshot-card {
-            background: var(--bg-elevated);
-            border-radius: 12px;
-            border: 1px solid var(--separator);
-            overflow: hidden;
-            transition: var(--transition);
-        }
-
-        .screenshot-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .screenshot-card.large {
-            grid-column: span 2;
-        }
-
-        .screenshot-img {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: linear-gradient(135deg, var(--bg) 0%, var(--bg-elevated) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .screenshot-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .screenshot-img span {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: var(--text-tertiary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .screenshot-caption {
-            padding: 16px 20px;
-            font-size: 14px;
-            color: var(--text-secondary);
-            border-top: 1px solid var(--separator);
-        }
-
-        /* How It Works */
-        #how-it-works {
-            border-top: 1px solid var(--separator);
-        }
-
-        .steps-header {
-            margin-bottom: 60px;
-        }
-
-        .steps-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 32px;
-        }
-
-        .step-card {
-            text-align: center;
-            padding: 32px 24px;
-        }
-
-        .step-number {
-            width: 56px;
-            height: 56px;
-            background: var(--bg-elevated);
-            border: 2px solid var(--accent);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-mono);
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--accent);
-            margin: 0 auto 24px;
-        }
-
-        .step-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .step-desc {
-            font-size: 14px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        /* Tech Stack */
-        #tech-stack {
-            background: var(--bg);
-            border-top: 1px solid var(--separator);
-            border-bottom: 1px solid var(--separator);
-            max-width: 100%;
-            padding-left: 40px;
-            padding-right: 40px;
-        }
-
-        #tech-stack > * {
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .tech-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .tech-header .section-desc {
-            margin: 0 auto;
-        }
-
-        .tech-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-        }
-
-        .tech-item {
-            background: var(--surface);
-            border: 1px solid var(--separator);
-            border-radius: 12px;
-            padding: 24px;
-            text-align: center;
-            transition: var(--transition);
-        }
-
-        .tech-item:hover {
-            border-color: rgba(255,255,255,0.12);
-        }
-
-        .tech-name {
-            font-family: var(--font-mono);
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .tech-desc {
-            font-size: 12px;
-            color: var(--text-tertiary);
-        }
-
         /* Disclaimer */
         .disclaimer-section {
-            background: rgba(255, 179, 64, 0.05);
-            border: 1px solid rgba(255, 179, 64, 0.15);
-            border-radius: 16px;
-            padding: 32px;
-            margin-top: 60px;
             display: flex;
             gap: 20px;
-            align-items: flex-start;
+            background: var(--surface);
+            border: 1px solid var(--warning);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 60px;
         }
 
         .disclaimer-icon {
+            flex-shrink: 0;
             width: 48px;
             height: 48px;
-            background: rgba(255, 179, 64, 0.15);
+            background: rgba(255, 179, 64, 0.1);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .disclaimer-icon svg {
-            width: 24px;
-            height: 24px;
             color: var(--warning);
         }
+
+        .disclaimer-icon svg { width: 24px; height: 24px; }
 
         .disclaimer-content h4 {
             font-size: 16px;
@@ -639,10 +478,170 @@
             line-height: 1.6;
         }
 
+        /* Screenshots */
+        #screenshots {
+            border-top: 1px solid var(--separator);
+        }
+
+        .screenshots-header {
+            margin-bottom: 60px;
+        }
+
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .screenshot-card {
+            background: var(--surface);
+            border: 1px solid var(--separator);
+            border-radius: 16px;
+            padding: 12px;
+            transition: var(--transition);
+        }
+
+        .screenshot-card:hover {
+            border-color: rgba(255,255,255,0.12);
+            transform: translateY(-4px);
+        }
+
+        .screenshot-card.large {
+            grid-column: span 2;
+        }
+
+        .screenshot-img {
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--bg-elevated);
+            margin-bottom: 16px;
+        }
+
+        .screenshot-img img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .screenshot-caption {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            padding: 0 4px;
+        }
+
+        /* Steps */
+        #how-it-works {
+            border-top: 1px solid var(--separator);
+        }
+
+        .steps-header {
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .steps-header .section-desc {
+            margin: 0 auto;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .step-card {
+            background: var(--surface);
+            border: 1px solid var(--separator);
+            border-radius: 16px;
+            padding: 32px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .step-card:hover {
+            border-color: rgba(255,255,255,0.12);
+            transform: translateY(-4px);
+        }
+
+        .step-number {
+            position: absolute;
+            top: -16px;
+            left: 32px;
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            color: var(--bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            margin-top: 8px;
+        }
+
+        .step-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Tech Stack */
+        #tech-stack {
+            border-top: 1px solid var(--separator);
+        }
+
+        .tech-header {
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .tech-header .section-desc {
+            margin: 0 auto;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .tech-item {
+            background: var(--surface);
+            border: 1px solid var(--separator);
+            border-radius: 12px;
+            padding: 24px;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .tech-item:hover {
+            border-color: rgba(255,255,255,0.12);
+            transform: translateY(-2px);
+        }
+
+        .tech-name {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .tech-desc {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
         /* CTA */
         .cta-section {
+            border-top: 1px solid var(--separator);
+            padding: 100px 40px;
             text-align: center;
-            padding: 120px 40px;
             position: relative;
         }
 
@@ -757,13 +756,70 @@
         }
 
         @media (max-width: 768px) {
-            nav { padding: 16px 20px; }
+            /* Fixed nav for mobile */
+            nav { 
+                padding: 12px 16px; 
+                gap: 8px;
+            }
+            
+            .logo {
+                gap: 10px;
+            }
+            
+            .logo svg {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .logo-text {
+                font-size: 22px;
+            }
+            
             .nav-links { display: none; }
-            .nav-actions { gap: 8px; }
-            .nav-btn { padding: 8px 14px; font-size: 13px; }
-            .nav-btn span { display: none; }
+            
+            .nav-actions { 
+                gap: 8px; 
+            }
+            
+            .nav-btn { 
+                padding: 8px 12px; 
+                font-size: 13px;
+            }
+            
+            .nav-btn svg {
+                display: none;
+            }
 
-            .hero { padding: 100px 20px 60px; }
+            /* Fixed hero for mobile */
+            .hero { 
+                padding: 100px 20px 60px; 
+            }
+            
+            .hero-badge {
+                font-size: 11px;
+                padding: 6px 10px;
+                gap: 6px;
+            }
+            
+            .hero-badge svg {
+                width: 14px;
+                height: 14px;
+            }
+            
+            .hero-title {
+                font-size: clamp(32px, 8vw, 40px);
+                letter-spacing: -1px;
+            }
+            
+            .hero-subtitle {
+                font-size: 16px;
+            }
+            
+            .hero-meta {
+                gap: 16px;
+                font-size: 12px;
+            }
+            
             section { padding: 60px 20px; }
 
             .features-grid { grid-template-columns: 1fr; }
@@ -772,10 +828,57 @@
             .steps-grid { grid-template-columns: 1fr; }
             .tech-grid { grid-template-columns: repeat(2, 1fr); }
 
-            .disclaimer-section { flex-direction: column; }
+            .disclaimer-section { 
+                flex-direction: column; 
+                gap: 16px;
+                padding: 20px;
+            }
 
-            .footer-content { flex-direction: column; text-align: center; }
-            .footer-brand { flex-direction: column; }
+            .footer-content { 
+                flex-direction: column; 
+                text-align: center; 
+            }
+            
+            .footer-brand { 
+                flex-direction: column; 
+                gap: 16px;
+            }
+            
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 16px;
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 480px) {
+            nav {
+                padding: 10px 12px;
+            }
+            
+            .logo svg {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .logo-text {
+                font-size: 20px;
+            }
+            
+            .nav-btn {
+                padding: 7px 10px;
+                font-size: 12px;
+            }
+            
+            .hero-badge {
+                font-size: 10px;
+                padding: 5px 8px;
+            }
+            
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         section[id] { scroll-margin-top: 80px; }
@@ -787,7 +890,7 @@
     <!-- Navigation -->
     <nav>
         <a href="#" class="logo">
-            <svg viewBox="-10 -10 120 120" fill="#e8e8eb" style="width: 60px; height: 60px; margin-bottom: 16px; ">
+            <svg viewBox="-10 -10 120 120" fill="#e8e8eb">
     <path transform="rotate(45, 50, 50)" d="M60.494,49.332l35.654,5.811V46.69l-10.494-3.753c0.046-1.388-0.175-4.873-3.474-5.502c0,0-4.388-1.138-4.956,2.487l-2.967-1.061c0.069-1.229-0.006-5.029-3.465-5.69c0,0-4.528-1.172-4.979,2.671l-7.696-2.753V19.224c-0.528-7.923-7.395-8.188-7.395-8.188s-6.867,0.265-7.395,8.188v13.866l-8.167,2.921c-0.336-4.047-4.998-2.839-4.998-2.839c-3.639,0.695-3.532,4.867-3.454,5.861l-2.957,1.058c-0.46-3.824-4.977-2.655-4.977-2.655c-3.445,0.658-3.533,4.43-3.466,5.674L5.295,46.69v8.452l35.655-5.811l2.377,4.227c0,0,0.264,20.864,2.905,24.562l-12.941,6.075l0.265,5.545h34.333l0.265-5.545L55.212,78.12c2.642-3.697,2.905-24.562,2.905-24.562L60.494,49.332z"/>
 </svg>
             <span class="logo-text">PlanePatrol</span>
@@ -821,10 +924,10 @@
                 </div>
                 <h1 class="hero-title">
                     Open Source 
-                    <span class="highlight">Plane Spotting Engine</span>
+                    <span class="highlight">Airplane Tracking</span>
                 </h1>
                 <p class="hero-subtitle">
-                    PlanePatrol<sup style="font-size: 10px; vertical-align: top; margin-left: 2px;">&copy;</sup> is a tiny, open source aircraft tracking client for plane spotters and hobby coders. Try it in your browser, clone the repo, swap out APIs, and drop it into your own maps, dashboards, or side projects.
+                    PlanePatrol<sup style="font-size: 10px; vertical-align: top; margin-left: 2px;">&copy;</sup> is a lightweight aircraft tracking engine built for plane spotters, aviation nerds, and hobby coders. It runs in your browser, pulls live aircraft data, and gives you cockpit mode, weather radar, and hotspot jumps. Clone it, extend it, or turn it into your own plane spotting app.
                 </p>
                 <div class="hero-actions">
                     <a href="/app/" class="btn btn-primary">
@@ -848,17 +951,16 @@
                         ~1800 lines of code
                     </div>
                     <div class="hero-meta-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m5.196-15.196l-4.243 4.243m0 6.364l-4.243 4.243m15.196-5.196h-6m-6 0H1m15.196 5.196l-4.243-4.243m0-6.364l-4.243-4.243"/></svg>
                         MIT License
                     </div>
                 </div>
             </div>
             <div class="hero-screenshot">
                 <div class="screenshot-frame">
-                    <!-- Replace src with your screenshot -->
-                    <img src="images/screen1.png" alt="plane patrol radar view showing aircraft over tokyo">
+                    <img src="images/screen1.png" alt="PlanePatrol Interface">
                 </div>
-                <div class="screenshot-label">Live demo tracking aircraft near Tokyo</div>
+                <div class="screenshot-label">Near JFK International Airport</div>
             </div>
         </div>
     </section>
@@ -866,9 +968,8 @@
     <!-- Features -->
     <section id="features">
         <div class="features-header">
-            <div class="section-label">What You Get</div>
-            <h2 class="section-title">Everything in One File</h2>
-            <p class="section-desc">No build tools, no dependencies to install. Just HTML, CSS, and JavaScript that runs anywhere.</p>
+            <div class="section-label">Features</div>
+            <h2 class="section-title">What You Get</h2>
         </div>
 
         <div class="features-grid">
@@ -880,63 +981,70 @@
                     </svg>
                 </div>
                 <h3 class="feature-title">Real-Time Tracking</h3>
-                <p class="feature-desc">Live aircraft positions via ADS-B, updating every 5 seconds with smooth animations.</p>
+                <p class="feature-desc">Live aircraft positions updated every 3 seconds via community ADS-B network</p>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon green">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                        <circle cx="12" cy="10" r="3"/>
-                    </svg>
-                </div>
-                <h3 class="feature-title">GPS Centered</h3>
-                <p class="feature-desc">Automatically centers on your location. Tap anywhere to explore other areas.</p>
-            </div>
+
             <div class="feature-card">
                 <div class="feature-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                        <circle cx="12" cy="12" r="3"/>
+                        <rect x="3" y="4" width="18" height="16" rx="2" ry="2"/>
+                        <line x1="12" y1="2" x2="12" y2="4"/>
+                        <line x1="16" y1="8" x2="8" y2="16"/>
+                        <line x1="8" y1="8" x2="16" y2="16"/>
                     </svg>
                 </div>
                 <h3 class="feature-title">Cockpit Mode</h3>
-                <p class="feature-desc">Tap any plane to enter immersive first-person view with satellite imagery.</p>
+                <p class="feature-desc">Immersive view with heading indicator, altitude, speed, and synthetic engine audio</p>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon green">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-                    </svg>
-                </div>
-                <h3 class="feature-title">Weather Radar</h3>
-                <p class="feature-desc">Toggle NEXRAD precipitation overlay to see weather affecting flights.</p>
-            </div>
+
             <div class="feature-card">
                 <div class="feature-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/>
                     </svg>
                 </div>
-                <h3 class="feature-title">Easy to Mod</h3>
-                <p class="feature-desc">Clean, commented code. Swap APIs, change colors, add features—it's your code now.</p>
+                <h3 class="feature-title">Weather Radar</h3>
+                <p class="feature-desc">NEXRAD overlay showing precipitation intensity with adjustable opacity</p>
             </div>
+
             <div class="feature-card">
-                <div class="feature-icon green">
+                <div class="feature-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
-                        <line x1="12" y1="18" x2="12.01" y2="18"/>
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
                     </svg>
                 </div>
-                <h3 class="feature-title">Mobile Ready</h3>
-                <p class="feature-desc">Touch gestures, haptic feedback, and responsive design that works on any device.</p>
+                <h3 class="feature-title">Aircraft Trails</h3>
+                <p class="feature-desc">Historical path visualization with fade effect and predictive trajectory lines</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Airport Search</h3>
+                <p class="feature-desc">Jump to any airport or callsign worldwide with geocoding and auto-complete</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Three Map Styles</h3>
+                <p class="feature-desc">Toggle between dark mode, satellite, and terrain views</p>
             </div>
         </div>
 
         <div class="disclaimer-section">
             <div class="disclaimer-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="12" cy="12" r="10"/>
                     <line x1="12" y1="9" x2="12" y2="13"/>
                     <line x1="12" y1="17" x2="12.01" y2="17"/>
                 </svg>
@@ -964,7 +1072,7 @@
             </div>
             <div class="screenshot-card">
                 <div class="screenshot-img">
-                    <img src="images/screen3.png" alt="cockpit view"> -->
+                    <img src="images/screen3.png" alt="cockpit view">
                 </div>
                 <div class="screenshot-caption">Immersive cockpit tracking with flight data</div>
             </div>
@@ -1008,7 +1116,7 @@
     <section id="tech-stack">
         <div class="tech-header">
             <div class="section-label">Built With</div>
-            <h2 class="section-title">Demo Source Stack</h2>
+            <h2 class="section-title">Demo Stack</h2>
             <p class="section-desc">Data providers who make this possible.</p>
         </div>
 
