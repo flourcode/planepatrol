@@ -445,7 +445,7 @@
             display: flex;
             gap: 20px;
             background: var(--surface);
-            border: 1px solid var(--warning);
+            border: 1px solid var(--success);
             border-radius: 16px;
             padding: 24px;
             margin-top: 60px;
@@ -455,12 +455,13 @@
             flex-shrink: 0;
             width: 48px;
             height: 48px;
-            background: rgba(255, 179, 64, 0.1);
+            background: var(--success-glow);
+            border: 1px solid var(--success);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--warning);
+            color: var(--success);
         }
 
         .disclaimer-icon svg { width: 24px; height: 24px; }
@@ -469,12 +470,12 @@
             font-size: 16px;
             font-weight: 600;
             margin-bottom: 8px;
-            color: var(--warning);
+            color: var(--success);
         }
 
         .disclaimer-content p {
             font-size: 14px;
-            color: var(--text-secondary);
+            color: var(--success);
             line-height: 1.6;
         }
 
