@@ -367,21 +367,11 @@
     display: none !important;
 }
 .system-footer {
-    position: absolute;
-    bottom: calc(4px + var(--safe-bottom));
-    left: 0;
-    width: 100%;
-    padding: 0 85px; /* Prevents text from hitting the HUD buttons on phones */
-    text-align: center;
-    pointer-events: none;
-    z-index: 30;
+  
     font-family: var(--font-mono);
-    font-size: 9px;
+    font-size: 8px;
     font-weight: 500;
     letter-spacing: 0.5px;
-    color: var(--text-tertiary);
-    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-    opacity: 0.6;
 	display: block !important;
 }
 /* Light theme overrides */
@@ -511,8 +501,14 @@ body.light-mode .action-btn.map-light-active {
                 <div class="aircraft-count">
                     <div class="count-number" id="planeCount">0</div>
                     <div class="count-label">Aircraft</div>
+					<div class="system-footer">Credits: Airplanes.live |
+        Open-Meteo | Esri | OSM
+				</div>
                 </div>
-                <div class="empty-state" id="emptyState">No aircraft. Increase radar range.</div>
+				
+                <div class="empty-state" id="emptyState">Increase radar range.<div class="system-footer">Credits: Airplanes.live |
+        Open-Meteo | Esri | OSM
+				</div></div>
                 <div class="action-buttons">
                     <button class="action-btn" id="exploreBtn" aria-label="Open Navigator">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 22px; height: 22px;">
@@ -555,9 +551,7 @@ body.light-mode .action-btn.map-light-active {
             </svg>
         </button>
     </div> 
-	<div class="system-footer">
-        Open-Meteo | Esri | OSM
-    </div>
+	
 
     <div id="cockpit-view">
         <div id="cockpitMap"></div>
@@ -883,7 +877,7 @@ function getProjectedPoint(lat, lon, bear, distKm) {
     return [nLon * 180 / Math.PI, nLat * 180 / Math.PI];
 }
 function getAircraftTypeName(typeCode) {
-    return AIRCRAFT_TYPES[typeCode] || typeCode || "Unknown Aircraft";
+    return AIRCRAFT_TYPES[typeCode] || typeCode || "";
 }
 function getIconType(t, category) {
     if (!t) return 'plane-jet';
@@ -1260,6 +1254,9 @@ function animatePlanes() {
         state.lastMapUpdateTime = now;
         const planeFeatures = []; const trailFeatures = []; const predictionFeatures = [];
         state.planesData.forEach((p, hex) => {
+            // Skip aircraft with no useful identification (no type, no flight, no registration)
+            if (!p.t && !p.flight && !p.r) return;
+            
             planeFeatures.push({ 
                 type: 'Feature', 
                 geometry: { type: 'Point', coordinates: [p.currentLon, p.currentLat] }, 
@@ -1711,7 +1708,7 @@ if (state.map.getLayer('osm')) {
         state.map.setPaintProperty('osm', 'raster-brightness-min', 0);
         
         // 1.0 is full brightness (Paper maps are bright)
-        state.map.setPaintProperty('osm', 'raster-brightness-max', 1.2); 
+        state.map.setPaintProperty('osm', 'raster-brightness-max', 1.0); 
         
         // -0.2 slightly desaturates it to look like printed ink
         state.map.setPaintProperty('osm', 'raster-saturation', 0.3);
