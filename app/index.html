@@ -152,6 +152,7 @@
         .action-btn:hover { background: var(--surface-elevated); }
         .action-btn.danger { background: rgba(255, 69, 58, 0.15); border-color: rgba(255, 69, 58, 0.3); color: var(--danger); }
         .action-btn.radar-active { background: rgba(50, 215, 75, 0.15); border-color: rgba(50, 215, 75, 0.3); color: var(--success); }
+        .action-btn.map-light-active { background: rgba(255, 179, 64, 0.15); border-color: rgba(255, 179, 64, 0.3); color: var(--warning); }
         .wx-text { font-family: var(--font-mono); font-size: 16px; font-weight: 700; letter-spacing: -0.5px; }
         .range-group {
             position: fixed; right: 20px; bottom: calc(90px + var(--safe-bottom));
@@ -383,6 +384,72 @@
     opacity: 0.6;
 	display: block !important;
 }
+/* Light theme overrides */
+body.light-mode {
+    /* Backgrounds */
+    --bg: #f5f5f7; /* soft neutral */
+    --surface: rgba(255, 255, 255, 0.9);
+    --surface-elevated: #ffffff;
+
+    /* Text */
+    --text-primary: #111827;  /* near black */
+    --text-secondary: #4b5563; 
+    --text-tertiary: #9ca3af;
+
+    /* Accents (keeps your blue but tones the rest to match light UI) */
+    --accent: #2563eb;
+    --success: #15803d;
+    --warning: #b45309;
+    --danger: #b91c1c;
+
+    /* Borders and shadow tuned for light map */
+    --separator: rgba(15, 23, 42, 0.08);
+    --shadow-elevation: 0 4px 20px rgba(15, 23, 42, 0.15);
+}
+
+/* Light mode specific chrome cleanups */
+body.light-mode .location-source {
+    background: rgba(15, 23, 42, 0.04);
+    color: var(--text-secondary);
+}
+
+body.light-mode .offline-overlay {
+    background: var(--bg);
+}
+
+body.light-mode .crosshair svg path,
+body.light-mode .crosshair svg circle {
+    stroke: rgba(15, 23, 42, 0.55);
+}
+
+body.light-mode .crosshair svg circle {
+    fill: rgba(15, 23, 42, 0.55);
+}
+
+/* You already have these, but together for clarity */
+body.light-mode .action-btn {
+    background: #f7f7f7;
+    color: #1a1a1a;
+}
+
+body.light-mode .action-btn:hover {
+    background: #ffffff;
+}
+
+body.light-mode .action-btn.danger {
+    background: #d96e6a; /* desaturated red */
+    color: #ffffff;
+}
+
+body.light-mode .action-btn.radar-active {
+    background: #7bb78d; /* desaturated green */
+    color: #ffffff;
+}
+
+body.light-mode .action-btn.map-light-active {
+    background: #d9b078; /* desaturated amber */
+    color: #1a1a1a;
+}
 
 </style>
 </head>
@@ -451,6 +518,12 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 22px; height: 22px;">
                             <circle cx="11" cy="11" r="8"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                    <button class="action-btn" id="mapStyleBtn" aria-label="Toggle map style">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 22px; height: 22px;">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
                         </svg>
                     </button>
                     <button class="action-btn radar-active" id="radarBtn" aria-label="Toggle Weather Radar">
@@ -588,6 +661,8 @@ const CONFIG = {
     API_PLANES: 'https://api.airplanes.live/v2/point/',
     RADAR_TILE_URL: 'https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/{z}/{x}/{y}.png',
     MAP_TILES: 'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+    // Find this inside const CONFIG = { ... }
+MAP_TILES_LIGHT: 'https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
     SAT_TILES: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     POLL_MS: 5000,
     WX_POLL_MS: 900000,
@@ -746,6 +821,7 @@ const state = {
     lastGeoUpdate: 0, 
     lastWxUpdate: 0, lastKnownGeo: null, useGeo: true,
     radarEnabled: false, 
+    mapStyleLight: false,
     soundEnabled: false,
     watchId: null, isFetchingPlanes: false, hasLockedLocation: false,
     cachedStationUrl: null, lastAnimateTime: 0, initializing: false,
@@ -776,6 +852,7 @@ const DOM = {
     cDist: document.getElementById('cDist'),
     cSpd: document.getElementById('cSpd'),
     radarBtn: document.getElementById('radarBtn'),
+    mapStyleBtn: document.getElementById('mapStyleBtn'),
     toast: document.getElementById('toast')
 };
 // === UTILITIES ===
@@ -1075,6 +1152,62 @@ async function fetchPlanes() {
         if (e.name !== 'AbortError') console.error('Plane fetch error:', e); 
     } finally { state.isFetchingPlanes = false; }
 }
+function updateMapColors() {
+    if (!state.map) return;
+    const colors = state.mapStyleLight ? {
+    icon: '#2c2c30',                  // Dark charcoal for planes (high contrast on paper)
+    text: 'rgba(20, 20, 25, 0.9)',    // Almost black for text
+    textHalo: 'rgba(255, 248, 240, 0.8)', // "Off-white" halo to blend with paper map
+    trail: '#2c2c3060',               // Semi-transparent charcoal trails
+    userDot: '#2c2c3060',
+    predictionDot: '#2c2c30'
+    } : {
+        icon: '#ebffeb',
+        text: 'rgba(245, 245, 247, 0.65)',
+        textHalo: 'rgba(0, 0, 0, 0.95)',
+        trail: '#ebffeb80',
+        userDot: '#ebffeb80',
+        predictionDot: '#ebffeb'
+    };
+    const loadIcon = (name, svg) => {
+        const img = new Image(64, 64);
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 64; canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, 64, 64);
+            if (state.map.hasImage(name)) state.map.removeImage(name);
+            state.map.addImage(name, ctx.getImageData(0, 0, 64, 64), { pixelRatio: 2 });
+        };
+        img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    };
+    loadIcon('plane-jet', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-5 -10 110 135"><path fill="${colors.icon}" d="m44.6 80.1c-0.3-4.7-0.6-13.2-1-20.5-0-0.6-0.3-1.2-0.9-1.6-0.5-0.4-1.2-0.5-1.8-0.4-7.4 1.8-28.1 6.8-28.1 6.8-0.5 0.1-1.1 0-1.5-0.3-0.4-0.3-0.7-0.8-0.7-1.4v-3.7c0-1.7 0.9-3.3 2.4-4.2 0 0 18.3-10.2 26.2-14.7 2.2-1.2 3.5-3.5 3.5-6-0.1-8 0.2-13.4 1-18 0.1-0.3 0.2-0.7 0.3-1 0 0 2.4-9 5.5-9s5.5 9 5.5 9c0.1 0.3 0.2 0.7 0.3 1 0.8 4.6 1 10 1 18-0 2.5 1.3 4.8 3.5 6 7.9 4.4 26.2 14.7 26.2 14.7 1.5 0.8 2.4 2.4 2.4 4.2v3.7c0 0.5-0.2 1-0.7 1.4-0.4 0.3-1 0.4-1.5 0.3 0 0-20.7-5-28.1-6.8-0.6-0.2-1.3 0-1.8 0.4-0.5 0.4-0.8 1-0.9 1.6-0.3 7.3-0.7 15.9-1 20.5l11.1 7.3c0.4 0.3 0.7 0.7 0.8 1.1l0.4 2c0.1 0.3-0 0.6-0.3 0.9-0.2 0.2-0.5 0.3-0.8 0.3l-12.7-1.8c-0.1 0.2-0.3 0.5-0.5 0.7l-1.7 2.4c-0.3 0.5-0.8 0.7-1.4 0.7-0.1 0-0.2-0-0.3-0s-0.2 0-0.3 0c-0.6 0-1.1-0.3-1.4-0.7l-1.7-2.4c-0.2-0.2-0.3-0.5-0.5-0.7l-12.7 1.8c-0.3 0-0.6-0.1-0.8-0.3-0.2-0.2-0.3-0.5-0.3-0.9l0.4-2c0.1-0.5 0.4-0.9 0.8-1.1l11.1-7.3z"/></svg>`);
+    loadIcon('plane-fighter', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="${colors.icon}" d="M50 5 L60 30 L95 70 L95 80 L60 60 L60 85 L70 95 L30 95 L40 85 L40 60 L5 80 L5 70 L40 30 Z"/></svg>`);
+    loadIcon('plane-heavy', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 120 120"><path fill="${colors.icon}" d="M60.494,49.332l35.654,5.811V46.69l-10.494-3.753c0.046-1.388-0.175-4.873-3.474-5.502c0,0-4.388-1.138-4.956,2.487l-2.967-1.061c0.069-1.229-0.006-5.029-3.465-5.69c0,0-4.528-1.172-4.979,2.671l-7.696-2.753V19.224c-0.528-7.923-7.395-8.188-7.395-8.188s-6.867,0.265-7.395,8.188v13.866l-8.167,2.921c-0.336-4.047-4.998-2.839-4.998-2.839c-3.639,0.695-3.532,4.867-3.454,5.861l-2.957,1.058c-0.46-3.824-4.977-2.655-4.977-2.655c-3.445,0.658-3.533,4.43-3.466,5.674L5.295,46.69v8.452l35.655-5.811l2.377,4.227c0,0,0.264,20.864,2.905,24.562l-12.941,6.075l0.265,5.545h34.333l0.265-5.545L55.212,78.12c2.642-3.697,2.905-24.562,2.905-24.562L60.494,49.332z"/></svg>`);
+    loadIcon('plane-prop', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="${colors.icon}" d="M96.5,32.5c-0.2-0.9-3.2-0.7-4.1-0.8c-1-0.1-22.5-0.6-22.5-0.6l-15.1,0.5c0,0-0.1-8-0.8-9.9c-0.5-1.3-0.9-2.2-2.2-2.1l-0.2,0c-0.4-1.8-1.2-3-1.6-3s-1.2,1.3-1.6,3l-0.2,0c-1.3-0.1-1.7,0.8-2.2,2.1c-0.7,1.8-0.8,9.9-0.8,9.9l-15.1-0.5c0,0-21.4,0.6-22.5,0.6c-1,0.1-3.9-0.1-4.1,0.8c-0.3,1.2-0.1,4.6-0.1,5.9c0,0.9,0,3.6,0,3.6h2l24.7,4.4L45.7,47h0.1L48,69.8c0,0-9.7,1-10.4,1c-0.8,0.1-1.3,0.2-1.6,0.4c-0.3,0.2-0.5,0.5-0.6,0.8c-0.1,0.3,0.1,3.6,0.1,4c0,0.4,0.2,0.9,0.6,1.3c0.4,0.4,0.9,0.8,1.7,0.9c0.8,0.1,9.4,1.4,9.5,1.4c0.1,0,1.8-3,1.8-3l1,6.9l1-6.9c0,0,1.7,3,1.8,3s8.7-1.3,9.5-1.4c0.7-0.1,1.3-0.4,1.7-0.9c0.4-0.4,0.6-0.9,0.6-1.3c0-0.4,0.2-3.7,0.1-4c-0.1-0.3-0.3-0.6-0.6-0.8c-0.3-0.2-0.8-0.4-1.6-0.5C61.6,70.8,52,69.7,52,69.7l2.4-22.9l15.4-0.5L94.5,42h2c0,0,0-2.7,0-3.6C96.6,37.1,96.7,33.7,96.5,32.5z"/></svg>`);
+    loadIcon('heli-icon', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-42.35 -84.7 931.7 1143.45"><g transform="rotate(0 423.5 487)"><path fill="${colors.icon}" d="M662 55l-125 125c-36,-185 -188,-171 -217,11l-136 -136c-19,-19 -46,8 -26,27l158 159c0,45 8,91 29,131l-187 188c-20,19 7,46 26,27l183 -182c7,9 16,16 25,21l0 253 -115 77 0 44 121 -54 64 0 120 54 0 -44 -114 -77 0 -253c6,-4 13,-9 19,-15l175 176c19,19 46,-8 27,-27l-179 -179c26,-45 35,-101 33,-152l146 -147c19,-19 -8,-46 -27,-27z"/></g></svg>`);
+    try {
+        if (state.map.getLayer('planes-labels')) {
+            state.map.setPaintProperty('planes-labels', 'text-color', colors.text);
+            state.map.setPaintProperty('planes-labels', 'text-halo-color', colors.textHalo);
+        }
+        if (state.map.getLayer('flight-trails-layer')) state.map.setPaintProperty('flight-trails-layer', 'line-color', colors.trail);
+        if (state.map.getLayer('flight-predictions-layer')) state.map.setPaintProperty('flight-predictions-layer', 'line-color', colors.trail);
+        if (state.map.getLayer('flight-predictions-dot')) state.map.setPaintProperty('flight-predictions-dot', 'circle-color', colors.predictionDot);
+        if (state.map.getLayer('user-location-dot')) state.map.setPaintProperty('user-location-dot', 'circle-color', colors.userDot);
+        
+        // Force a refresh of the planes layer to use new icons
+        if (state.map.getSource('planes')) {
+            const currentData = state.map.getSource('planes')._data;
+            if (currentData) {
+                state.map.getSource('planes').setData(currentData);
+            }
+        }
+    } catch (e) {
+        // Silently handle errors
+    }
+}
+
 async function updateWeather(force = false) {
     if (!state.lat || !state.lon) return;
     const now = Date.now();
@@ -1556,6 +1689,58 @@ DOM.radarBtn.addEventListener('click', () => {
     DOM.radarBtn.classList.toggle('radar-active', state.radarEnabled);
     if (state.map && state.map.getLayer('radar-layer')) state.map.setLayoutProperty('radar-layer', 'visibility', state.radarEnabled ? 'visible' : 'none');
     if (state.cockpitMap && state.cockpitMap.getLayer('cockpit-radar')) state.cockpitMap.setLayoutProperty('cockpit-radar', 'visibility', state.radarEnabled ? 'visible' : 'none');
+});
+document.getElementById('mapStyleBtn').addEventListener('click', () => {
+    haptic('light');
+    state.mapStyleLight = !state.mapStyleLight;
+	document.body.classList.toggle('light-mode', state.mapStyleLight);
+    const tiles = state.mapStyleLight ? CONFIG.MAP_TILES_LIGHT : CONFIG.MAP_TILES;
+    document.getElementById("mapStyleBtn").classList.toggle("map-light-active", state.mapStyleLight);
+    
+    // Update main map tiles
+    if (state.map && state.map.getSource('osm')) {
+        state.map.getSource('osm').tiles = [tiles];
+        state.map.style.sourceCaches.osm.clearTiles();
+        state.map.style.sourceCaches.osm.update(state.map.transform);
+        state.map.triggerRepaint();
+        
+
+if (state.map.getLayer('osm')) {
+    if (state.mapStyleLight) {
+        // PAPER MAP SETTINGS
+        state.map.setPaintProperty('osm', 'raster-brightness-min', 0);
+        
+        // 1.0 is full brightness (Paper maps are bright)
+        state.map.setPaintProperty('osm', 'raster-brightness-max', 1.2); 
+        
+        // -0.2 slightly desaturates it to look like printed ink
+        state.map.setPaintProperty('osm', 'raster-saturation', 0.3);
+        
+        // 0.1 adds just a little crispness to the lines
+        state.map.setPaintProperty('osm', 'raster-contrast', 0);         
+    } else {
+        // DARK MODE DEFAULTS
+        state.map.setPaintProperty('osm', 'raster-brightness-min', 0);
+        state.map.setPaintProperty('osm', 'raster-brightness-max', 1);
+        state.map.setPaintProperty('osm', 'raster-saturation', 0);
+        state.map.setPaintProperty('osm', 'raster-contrast', 0);
+    }
+}
+        
+        // Update colors immediately and again with delays to ensure icons load
+        updateMapColors();
+        setTimeout(() => updateMapColors(), 100);
+        setTimeout(() => updateMapColors(), 300);
+        setTimeout(() => updateMapColors(), 600);
+    }
+    
+    // Update cockpit map tiles if it exists
+    if (state.cockpitMap && state.cockpitMap.getSource('osm-cockpit')) {
+        state.cockpitMap.getSource('osm-cockpit').tiles = [tiles];
+        state.cockpitMap.style.sourceCaches['osm-cockpit'].clearTiles();
+        state.cockpitMap.style.sourceCaches['osm-cockpit'].update(state.cockpitMap.transform);
+        state.cockpitMap.triggerRepaint();
+    }
 });
 document.getElementById('cockpitSoundToggle').addEventListener('click', () => {
     haptic('light'); state.soundEnabled = !state.soundEnabled;
